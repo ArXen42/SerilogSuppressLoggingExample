@@ -24,12 +24,12 @@ namespace SerilogSuppressLoggingExample
 
 			Log.Logger = new LoggerConfiguration()
 				.Enrich.WithThreadId()
-				.Filter.ByExcluding(logEvent => logEvent.IsSupressed()) // Check if log event marked with supression property
+				.Filter.ByExcluding(logEvent => logEvent.IsSuppressed()) // Check if log event marked with supression property
 				.Enrich.FromLogContext()
 				.WriteTo.Console(new JsonFormatter())
 				.CreateLogger();
 
-			using (SerilogExtensions.SupressLogging())
+			using (SerilogExtensions.SuppressLogging())
 			{
 				StartListeningSomething();
 				Console.ReadKey(); // Will ignore background thread log messages until some key is entered

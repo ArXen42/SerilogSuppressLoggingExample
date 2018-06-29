@@ -10,18 +10,18 @@ namespace SerilogSuppressLoggingExample
 	/// </summary>
 	public static class SerilogExtensions
 	{
-		private const           String        SupressLoggingProperty = "SuppressLogging";
+		private const           String        SuppressLoggingProperty = "SuppressLogging";
 		private static readonly HashSet<Guid> ActiveSuppressions     = new HashSet<Guid>();
 
 		/// <summary>
 		///     Get disposable token to supress logging for context.
 		/// </summary>
 		/// <remarks>
-		///     Pushes "SupressLogging" property with unique value to SerilogContext.
+		///     Pushes "SuppressLogging" property with unique value to SerilogContext.
 		///     When disposed, disposes Serilog property push token and invalidates stored value so new log messages are no longer
 		///     supressed.
 		/// </remarks>
-		public static IDisposable SupressLogging()
+		public static IDisposable SuppressLogging()
 		{
 			return new SuppressLoggingDisposableToken();
 		}
@@ -30,15 +30,15 @@ namespace SerilogSuppressLoggingExample
 		///     Determines whether the given log event suppressed.
 		/// </summary>
 		/// <remarks>
-		///     Also removes "SupressLogging" property if present.
+		///     Also removes "SuppressLogging" property if present.
 		/// </remarks>
-		public static Boolean IsSupressed(this LogEvent logEvent)
+		public static Boolean IsSuppressed(this LogEvent logEvent)
 		{
-			Boolean containsProperty = logEvent.Properties.TryGetValue(SupressLoggingProperty, out var val);
+			Boolean containsProperty = logEvent.Properties.TryGetValue(SuppressLoggingProperty, out var val);
 			if (!containsProperty)
 				return false;
 
-			logEvent.RemovePropertyIfPresent(SupressLoggingProperty); //No need for that in logs
+			logEvent.RemovePropertyIfPresent(SuppressLoggingProperty); //No need for that in logs
 
 			if (val is ScalarValue scalar && scalar.Value is Guid id)
 				return ActiveSuppressions.Contains(id);
@@ -57,7 +57,7 @@ namespace SerilogSuppressLoggingExample
 			public SuppressLoggingDisposableToken()
 			{
 				_guid                   = Guid.NewGuid();
-				_pushPropertyDisposable = LogContext.PushProperty(SupressLoggingProperty, _guid);
+				_pushPropertyDisposable = LogContext.PushProperty(SuppressLoggingProperty, _guid);
 
 				ActiveSuppressions.Add(_guid);
 			}
